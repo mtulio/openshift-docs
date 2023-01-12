@@ -25,6 +25,9 @@
 ifeval::["{context}" == "installing-aws-user-infra"]
 :aws:
 endif::[]
+ifeval::["{context}" == "installing-aws-localzone"]
+:localzone:
+endif::[]
 ifeval::["{context}" == "installing-restricted-networks-aws"]
 :aws:
 :restricted:
@@ -142,6 +145,9 @@ ifdef::restricted,baremetal-restricted[]
 For a restricted network installation, these files are on your mirror host.
 endif::restricted,baremetal-restricted[]
 * You created the `install-config.yaml` installation configuration file.
+ifdef::localzone[]
+* You installed the `jq` package.
+endif::localzone[]
 
 .Procedure
 
@@ -155,7 +161,7 @@ $ ./openshift-install create manifests --dir <installation_directory> <1>
 <1> For `<installation_directory>`, specify the installation directory that
 contains the `install-config.yaml` file you created.
 
-ifdef::aws,azure,ash,gcp[]
+ifdef::aws,azure,ash,gcp,localzone[]
 . Remove the Kubernetes manifest files that define the control plane machines:
 +
 [source,terminal]
@@ -164,16 +170,16 @@ $ rm -f <installation_directory>/openshift/99_openshift-cluster-api_master-machi
 ----
 +
 By removing these files, you prevent the cluster from automatically generating control plane machines.
-endif::aws,azure,ash,gcp[]
+endif::aws,azure,ash,gcp,localzone[]
 
-ifdef::aws[]
+ifdef::aws,localzone[]
 . Remove the Kubernetes manifest files that define the control plane machine set:
 +
 [source,terminal]
 ----
 $ rm -f <installation_directory>/openshift/99_openshift-machine-api_master-control-plane-machine-set.yaml
 ----
-endif::aws[]
+endif::aws,localzone[]
 
 ifdef::gcp[]
 ifndef::user-infra-vpc[]
@@ -192,7 +198,106 @@ $ rm -f <installation_directory>/openshift/99_openshift-cluster-api_worker-machi
 ----
 +
 Because you create and manage the worker machines yourself, you do not need to initialize these machines.
+//The current AWS UPI method removes all of the `99_openshift-cluster-api_worker-machineset-* files. What is different about the local zones that means that we should retain them? Should we remove whatever the installation program creates and then specifically create this new file?
 endif::aws,azure,ash,gcp[]
+ifdef::localzone[]
+. Create the machineset for the nodes in your local zone.
+.. Export a variable to define the instance type for your control plane machines by running the following command:
++
+[source,terminal]
+----
+$ export INSTANCE_TYPE="<instance_type>" <1>
+----
+<1> Set `<instance_type>` to a tested instance type, such as `c5d.2xlarge`.
+
+.. Store the AMI ID as a local variable by running the following command:
++
+[source,terminal]
+----
+$ export AMI_ID=$(grep ami \
+  openshift/99_openshift-cluster-api_worker-machineset-0.yaml \
+  | tail -n1 | awk '{print$2}')
+----
+
+.. Store the AMI ID as a local variable by running the following command:
++
+[source,terminal]
+----
+$ export SUBNET_ID=$(aws cloudformation describe-stacks \
+  --stack-name "<subnet_stack_name>" \ <1>
+  | jq -r .Stacks[0].Outputs[0].OutputValue)
+----
+<1> For `<subnet_stack_name>`, specify the name of the subnet stack that you created.
+
+.. Create the worker manifest file for the local zone that your VPC uses by running the following command:
++
+[source,terminal]
+----
+$ cat <<EOF > openshift/99_openshift-cluster-api_worker-machineset-nyc1.yaml
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: ${CLUSTER_ID}
+  name: ${CLUSTER_ID}-edge-${LZ_ZONE_NAME}
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: ${CLUSTER_ID}
+      machine.openshift.io/cluster-api-machineset: ${CLUSTER_ID}-edge-${LZ_ZONE_NAME}
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: ${CLUSTER_ID}
+        machine.openshift.io/cluster-api-machine-role: edge
+        machine.openshift.io/cluster-api-machine-type: edge
+        machine.openshift.io/cluster-api-machineset: ${CLUSTER_ID}-edge-${LZ_ZONE_NAME}
+    spec:
+      metadata:
+        labels:
+          location: local-zone
+          zone_group: ${LZ_ZONE_NAME::-1}
+          node-role.kubernetes.io/edge: ""
+      taints:
+        - key: node-role.kubernetes.io/edge
+          effect: NoSchedule
+      providerSpec:
+        value:
+          ami:
+            id: ${AMI_ID}
+          apiVersion: machine.openshift.io/v1beta1
+          blockDevices:
+          - ebs:
+              volumeSize: 120
+              volumeType: gp2
+          credentialsSecret:
+            name: aws-cloud-credentials
+          deviceIndex: 0
+          iamInstanceProfile:
+            id: ${CLUSTER_ID}-worker-profile
+          instanceType: ${INSTANCE_TYPE}
+          kind: AWSMachineProviderConfig
+          placement:
+            availabilityZone: ${LZ_ZONE_NAME}
+            region: ${CLUSTER_REGION}
+          securityGroups:
+          - filters:
+            - name: tag:Name
+              values:
+              - ${CLUSTER_ID}-worker-sg
+          subnet:
+            id: ${SUBNET_ID}
+          publicIp: true
+          tags:
+          - name: kubernetes.io/cluster/${CLUSTER_ID}
+            value: owned
+          userDataSecret:
+            name: worker-user-data
+EOF
+----
+endif::localzone[]
 
 ifdef::osp,vsphere,vmc[]
 . Remove the Kubernetes manifest files that define the control plane machines and compute machine sets:
@@ -496,6 +601,9 @@ ifeval::["{context}" == "installing-restricted-networks-aws"]
 endif::[]
 ifeval::["{context}" == "installing-aws-user-infra"]
 :!aws:
+endif::[]
+ifeval::["{context}" == "installing-aws-localzone"]
+:!localzone:
 endif::[]
 ifeval::["{context}" == "installing-azure-user-infra"]
 :!azure:

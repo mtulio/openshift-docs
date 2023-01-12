@@ -1,12 +1,12 @@
 :_content-type: ASSEMBLY
-[id="installing-aws-user-infra"]
-= Installing a cluster on user-provisioned infrastructure in AWS by using CloudFormation templates
+[id="installing-aws-localzone"]
+= Installing a cluster on user-provisioned infrastructure in AWS that uses local zones
 include::_attributes/common-attributes.adoc[]
-:context: installing-aws-user-infra
+:context: installing-aws-localzone
 
 toc::[]
 
-In {product-title} version {product-version}, you can install a cluster on Amazon Web Services (AWS) that uses infrastructure that you provide.
+In {product-title} version {product-version}, you can install a cluster on Amazon Web Services (AWS) that uses both infrastructure that you provide and local zones.
 
 One way to create this infrastructure is to use the provided CloudFormation templates. You can modify the templates to customize your infrastructure or use the information that they contain to create AWS objects according to your company's policies.
 
@@ -19,7 +19,7 @@ The steps for performing a user-provisioned infrastructure installation are prov
 
 * You reviewed details about the xref:../../architecture/architecture-installation.adoc#architecture-installation[{product-title} installation and update] processes.
 * You read the documentation on xref:../../installing/installing-preparing.adoc#installing-preparing[selecting a cluster installation method and preparing it for users].
-* You xref:../../installing/installing_aws/installing-aws-account.adoc#installing-aws-account[configured an AWS account] to host the cluster.
+* You xref:../../installing/installing_aws/installing-aws-account.adoc#installing-aws-account[configured an AWS account] to host the cluster and configured local zones for your account.
 +
 [IMPORTANT]
 ====
@@ -58,6 +58,20 @@ include::modules/installation-aws-permissions.adoc[leveloffset=+2]
 
 include::modules/installation-aws-marketplace-subscribe.adoc[leveloffset=+1]
 
+//These next four modules seem like they're placed awkwardly, but you need the subnets to put in the install-config.yaml file.
+include::modules/installation-creating-aws-vpc-localzone.adoc[leveloffset=+1]
+
+include::modules/installation-cloudformation-vpc-localzone.adoc[leveloffset=+2]
+
+[role="_additional-resources"]
+.Additional resources
+
+* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
+
+include::modules/installation-creating-aws-subnet-localzone.adoc[leveloffset=+1]
+
+include::modules/installation-cloudformation-subnet-localzone.adoc[leveloffset=+2]
+
 include::modules/installation-obtaining-installer.adoc[leveloffset=+1]
 
 include::modules/ssh-agent-using.adoc[leveloffset=+1]
@@ -80,15 +94,6 @@ include::modules/installation-configure-proxy.adoc[leveloffset=+2]
 include::modules/installation-user-infra-generate-k8s-manifest-ignition.adoc[leveloffset=+2]
 
 include::modules/installation-extracting-infraid.adoc[leveloffset=+1]
-
-include::modules/installation-creating-aws-vpc.adoc[leveloffset=+1]
-
-include::modules/installation-cloudformation-vpc.adoc[leveloffset=+2]
-
-[role="_additional-resources"]
-.Additional resources
-
-* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
 
 include::modules/installation-creating-aws-dns.adoc[leveloffset=+1]
 
@@ -153,6 +158,8 @@ scale, manage, and upgrade your workers.
 ////
 
 include::modules/installation-cloudformation-worker.adoc[leveloffset=+2]
+//Do we need to remove the instructions to create separate worker nodes? It looks like the installation program might make the workers because we're creating a manifest for them.
+
 
 [role="_additional-resources"]
 .Additional resources
@@ -207,12 +214,12 @@ include::modules/cluster-telemetry.adoc[leveloffset=+1]
 * See xref:../../support/remote_health_monitoring/about-remote-health-monitoring.adoc#about-remote-health-monitoring[About remote health monitoring] for more information about the Telemetry service.
 
 [role="_additional-resources"]
-[id="installing-aws-user-infra-additional-resources"]
+[id="installing-localzone-additional-resources"]
 == Additional resources
 
 * See link:https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacks.html[Working with stacks] in the AWS documentation for more information about AWS CloudFormation stacks.
 
-[id="installing-aws-user-infra-next-steps"]
+[id="installing-aws-localzone-next-steps"]
 == Next steps
 
 * xref:../../installing/validating-an-installation.adoc#validating-an-installation[Validating an installation].

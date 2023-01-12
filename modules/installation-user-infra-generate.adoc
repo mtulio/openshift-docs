@@ -19,6 +19,11 @@ ifeval::["{context}" == "installing-aws-user-infra"]
 :cp: AWS
 :aws:
 endif::[]
+ifeval::["{context}" == "installing-aws-localzone"]
+:cp-first: Amazon Web Services
+:cp: AWS
+:aws:
+endif::[]
 ifeval::["{context}" == "installing-azure-user-infra"]
 :cp-first: Microsoft Azure
 :cp: Azure
@@ -91,6 +96,11 @@ endif::[]
 ifeval::["{context}" == "installing-aws-user-infra"]
 :!cp-first:
 :!cp:
+:!aws:
+endif::[]
+ifeval::["{context}" == "installing-aws-localzone"]
+:!cp-first: Amazon Web Services
+:!cp: AWS
 :!aws:
 endif::[]
 ifeval::["{context}" == "installing-azure-user-infra"]

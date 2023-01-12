@@ -33,10 +33,10 @@ $ aws ec2 describe-availability-zones \
     --all-availability-zones
 ----
 +
-Depending on the region, the list of available zones can be long.  list can be long. Things you need to know:
+Depending on the region, the list of available zones can be long. Things you need to know:
 +
-`${REGION}[a-z]`:: Availability zones available in the region.
-`${REGION}-LID-N[a-z]`:: Local Zones available. `LID-N` is the location identifier, and `[a-z]` is the zone identifier.
+`${REGION}[a-z]`:: Availability zones available in the region
+`${REGION}-LID-N[a-z]`:: Available Local Zones. `${REGION}-LID-N` is the zone group identifier, and `[a-z]` is the zone identifier
 `${REGION}-wl1-LID-wlz-[1-9]`:: Available Wavelength zones
 
 . Export a variable to contain the name of the local zone to host your VPC by running the following command:
@@ -48,7 +48,7 @@ $ export ZONE_GROUP_NAME="${CLUSTER_REGION}-<location_identifier>-<zone_identifi
 <1> For `<location_identifier>-<zone_identifier>`, specify the location identifier and zone identifier for the local zone that you selected for your region. For example, specify `nyc-1a` to use the US East (New York) local zone.
 
 
-. Opt in to the location for your AWS account by running the following command:
+. Opt in to the zone group on your AWS account by running the following command:
 +
 [source,terminal]
 ----

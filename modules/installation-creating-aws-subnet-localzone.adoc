@@ -4,7 +4,7 @@
 
 :_content-type: PROCEDURE
 [id="installation-creating-aws-subnet-localzone_{context}"]
-= Creating a subnet that uses local zones in AWS
+= Creating a subnet that uses AWS Local Zones
 
 You must create a subnet in Amazon Web Services (AWS) that uses local zones for your {product-title}
 cluster to use.

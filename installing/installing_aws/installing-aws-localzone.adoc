@@ -1,6 +1,6 @@
 :_content-type: ASSEMBLY
 [id="installing-aws-localzone"]
-= Installing a cluster on user-provisioned infrastructure in AWS that uses local zones
+= Installing a cluster on installer-provisioned infrastructure in AWS that uses local zones
 include::_attributes/common-attributes.adoc[]
 :context: installing-aws-localzone
 
@@ -12,7 +12,7 @@ One way to create this infrastructure is to use the provided CloudFormation temp
 
 [IMPORTANT]
 ====
-The steps for performing a user-provisioned infrastructure installation are provided as an example only. Installing a cluster with infrastructure you provide requires knowledge of the cloud provider and the installation process of {product-title}. Several CloudFormation templates are provided to assist in completing these steps or to help model your own. You are also free to create the required resources through other methods; the templates are just an example.
+The steps for performing a installer-provisioned infrastructure installation are provided as an example only. Installing a cluster with infrastructure you provide requires knowledge of the cloud provider and the installation process of {product-title}. Several CloudFormation templates are provided to assist in completing these steps or to help model your own. You are also free to create the required resources through other methods; the templates are just an example.
 ====
 
 == Prerequisites
@@ -37,24 +37,15 @@ Be sure to also review this site list if you are configuring a proxy.
 include::modules/cluster-entitlements.adoc[leveloffset=+1]
 
 [id="installation-requirements-user-infra_{context}"]
-== Requirements for a cluster with user-provisioned infrastructure
+== Requirements for a cluster with installer-provisioned infrastructure
 
-For a cluster that contains user-provisioned infrastructure, you must deploy all
-of the required machines.
-
-This section describes the requirements for deploying {product-title} on user-provisioned infrastructure.
+This section describes the requirements for deploying {product-title} on an existing AWS VPC with Local Zone subnets.
 
 include::modules/installation-machine-requirements.adoc[leveloffset=+2]
 include::modules/installation-minimum-resource-requirements.adoc[leveloffset=+2]
 include::modules/installation-aws-tested-machine-types.adoc[leveloffset=+2]
 include::modules/installation-aws-arm-tested-machine-types.adoc[leveloffset=+2]
-include::modules/csr-management.adoc[leveloffset=+2]
 
-include::modules/installation-supported-aws-machine-types.adoc[leveloffset=+2]
-
-include::modules/installation-aws-user-infra-requirements.adoc[leveloffset=+1]
-
-include::modules/installation-aws-permissions.adoc[leveloffset=+2]
 
 include::modules/installation-aws-marketplace-subscribe.adoc[leveloffset=+1]
 
@@ -87,117 +78,11 @@ include::modules/installation-generate-aws-user-infra-install-config.adoc[levelo
 
 * See link:https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html[Configuration and credential file settings] in the AWS documentation for more information about AWS profile and credential configuration.
 
-include::modules/installation-configure-proxy.adoc[leveloffset=+2]
-
-//include::modules/installation-three-node-cluster.adoc[leveloffset=+2]
-
 include::modules/installation-user-infra-generate-k8s-manifest-ignition.adoc[leveloffset=+2]
-
-include::modules/installation-extracting-infraid.adoc[leveloffset=+1]
-
-include::modules/installation-creating-aws-dns.adoc[leveloffset=+1]
-
-include::modules/installation-cloudformation-dns.adoc[leveloffset=+2]
-
-[role="_additional-resources"]
-.Additional resources
-
-* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
-
-* You can view details about your hosted zones by navigating to the link:https://console.aws.amazon.com/route53/[AWS Route 53 console].
-
-* See link:https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ListInfoOnHostedZone.html[Listing public hosted zones] in the AWS documentation for more information about listing public hosted zones.
-
-include::modules/installation-creating-aws-security.adoc[leveloffset=+1]
-
-include::modules/installation-cloudformation-security.adoc[leveloffset=+2]
-
-[role="_additional-resources"]
-.Additional resources
-
-* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
-
-include::modules/installation-aws-ami-stream-metadata.adoc[leveloffset=+1]
-
-include::modules/installation-aws-user-infra-rhcos-ami.adoc[leveloffset=+1]
-
-include::modules/installation-aws-regions-with-no-ami.adoc[leveloffset=+2]
-
-include::modules/installation-aws-upload-custom-rhcos-ami.adoc[leveloffset=+2]
-
-include::modules/installation-creating-aws-bootstrap.adoc[leveloffset=+1]
-
-include::modules/installation-cloudformation-bootstrap.adoc[leveloffset=+2]
-
-[role="_additional-resources"]
-.Additional resources
-
-* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
-
-* See xref:../../installing/installing_aws/installing-aws-user-infra.adoc#installation-aws-user-infra-rhcos-ami_installing-aws-user-infra[{op-system} AMIs for the AWS infrastructure] for details about the {op-system-first} AMIs for the AWS zones.
-
-include::modules/installation-creating-aws-control-plane.adoc[leveloffset=+1]
-
-include::modules/installation-cloudformation-control-plane.adoc[leveloffset=+2]
-
-[role="_additional-resources"]
-.Additional resources
-
-* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
-
-include::modules/installation-creating-aws-worker.adoc[leveloffset=+1]
-
-////
-[id="installing-workers-aws-user-infra"]
-== Creating worker nodes
-
-You can either manually create worker nodes or use a MachineSet to create worker
-nodes after the cluster deploys. If you use a MachineSet to create and maintain
-the workers, you can allow the cluster to manage them. This allows you to easily
-scale, manage, and upgrade your workers.
-////
-
-include::modules/installation-cloudformation-worker.adoc[leveloffset=+2]
-//Do we need to remove the instructions to create separate worker nodes? It looks like the installation program might make the workers because we're creating a manifest for them.
-
-
-[role="_additional-resources"]
-.Additional resources
-
-* You can view details about the CloudFormation stacks that you create by navigating to the link:https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console].
-
-include::modules/installation-aws-user-infra-bootstrap.adoc[leveloffset=+1]
-
-[role="_additional-resources"]
-.Additional resources
-
-* See xref:../../support/troubleshooting/troubleshooting-installations.html#monitoring-installation-progress_troubleshooting-installations[Monitoring installation progress] for details about monitoring the installation, bootstrap, and control plane logs as an {product-title} installation progresses.
-
-* See xref:../../support/troubleshooting/troubleshooting-installations.adoc#gathering-bootstrap-diagnostic-data_troubleshooting-installations[Gathering bootstrap node diagnostic data] for information about troubleshooting issues related to the bootstrap process.
-
-* You can view details about the running instances that are created by using the link:https://console.aws.amazon.com/ec2[AWS EC2 console].
 
 include::modules/cli-installing-cli.adoc[leveloffset=+1]
 
 include::modules/cli-logging-in-kubeadmin.adoc[leveloffset=+1]
-
-include::modules/installation-approve-csrs.adoc[leveloffset=+1]
-
-include::modules/installation-operators-config.adoc[leveloffset=+1]
-
-include::modules/installation-registry-storage-config.adoc[leveloffset=+2]
-
-You can configure registry storage for user-provisioned infrastructure in AWS to deploy {product-title} to hidden regions. See xref:../../registry/configuring_registry_storage/configuring-registry-storage-aws-user-infrastructure.adoc#configuring-registry-storage-aws-user-infrastructure[Configuring the registry for AWS user-provisioned infrastructure] for more information.
-
-include::modules/registry-configuring-storage-aws-user-infra.adoc[leveloffset=+3]
-
-include::modules/installation-registry-storage-non-production.adoc[leveloffset=+3]
-
-include::modules/installation-aws-user-infra-delete-bootstrap.adoc[leveloffset=+1]
-
-include::modules/installation-create-ingress-dns-records.adoc[leveloffset=+1]
-
-include::modules/installation-aws-user-infra-installation.adoc[leveloffset=+1]
 
 include::modules/logging-in-by-using-the-web-console.adoc[leveloffset=+1]
 

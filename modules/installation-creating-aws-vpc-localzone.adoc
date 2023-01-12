@@ -4,11 +4,11 @@
 
 :_content-type: PROCEDURE
 [id="installation-creating-aws-vpc-localzone_{context}"]
-= Creating a VPC that uses local zones in AWS
+= Creating a VPC that uses AWS Local Zones
 
-You must create a Virtual Private Cloud (VPC) in Amazon Web Services (AWS) that uses local zones for your {product-title}
-cluster to use. You can further customize the VPC to meet your requirements, including
-VPN and route tables.
+You must create a Virtual Private Cloud (VPC), and subnets for each Local Zone location, in Amazon Web Services (AWS) for your {product-title}
+cluster to extend worker nodes to the edge locations. You can further customize the VPC to meet your requirements, including
+VPN, route tables, and add new Local Zone subnets not included on day-0.
 
 You can use the provided CloudFormation template and a custom parameter file to create a stack of AWS resources that represent the VPC.
 
@@ -24,7 +24,7 @@ have to contact Red Hat support with your installation logs.
 
 * You configured an AWS account.
 * You added your AWS keys and region to your local AWS profile by running `aws configure`.
-* You opted in your AWS account to the local zone that will host your VPC.
+* You opted in to the Local Zones on your AWS account.
 * You generated the Ignition config files for your cluster.
 
 .Procedure

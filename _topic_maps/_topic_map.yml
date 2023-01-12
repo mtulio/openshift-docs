@@ -171,7 +171,7 @@ Topics:
     File: installing-aws-china
   - Name: Installing a cluster on AWS using CloudFormation templates
     File: installing-aws-user-infra
-  - Name: Installing a cluster on AWS that uses local zones
+  - Name: Installing a cluster on AWS extending workers to the Local Zones
     File: installing-aws-localzone
   - Name: Installing a cluster on AWS in a restricted network with user-provisioned infrastructure
     File: installing-restricted-networks-aws
